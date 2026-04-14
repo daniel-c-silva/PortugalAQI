@@ -13,7 +13,7 @@ function App() {
 
     // ! Function get data from backend
     useEffect(() => { // * using use effect makes it so it starts on load.
-        fetch(`http://127.0.0.1:5002`) // * call backend
+        fetch(`https://portugalaqi.onrender.com`) // * call backend (on render!!)
             .then(response => response.json()) // * once we get an answer get the response and convert it to json
             .then(data => setGetData(data)) // * name the rsponse.json data and add it to getData using setGetData
 
