@@ -1,0 +1,162 @@
+/* The container */
+
+.main-dashboard {
+    position: relative;
+    width: 800px;
+    height: 1600px; /* Tall enough for the whole country */
+    margin: 0 auto;
+    text-align: center;
+    background-image: url('./assets/portugal.png');
+    background-size: cover;
+    background-position: center;
+    image-rendering: pixelated; 
+    image-rendering: crisp-edges;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Title */
+.main-dashboard h1 {
+    padding-top: 40px;
+    margin-bottom: 80px; /* gap below the title */
+    font-size: 2.5rem;
+}
+
+/* Individual City Blocks */
+.aqi-block {
+    position: absolute;
+    width: 120px;
+    height: 70px;
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 5;
+    /* Added transition for smooth movement */
+    transition: transform 0.3s ease, z-index 0s;
+}
+
+.button {
+    margin-top: 5px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    background-color: #ce9842;
+    color: rgb(39, 5, 5);
+    border: none; 
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #7b2e08;
+    color: white;
+    scale: 1.1;
+}
+
+/*  =========================================
+   * NORTH ZONE (Top: 150px to 450px)
+   ========================================= */
+#braga      { top: 280px; left: 340px; }
+#guimaraes  { top: 290px; left: 350px; }
+#vila-real  { top: 340px; left: 450px; }
+#porto      { top: 360px; left: 320px; }
+
+/*  =========================================
+   * HOVER LOGIC FOR OVERLAP
+   ========================================= */
+/* Move Braga left when touched */
+#braga:hover {
+    transform: translateX(-200px);
+    z-index: 20;
+}
+
+/* Move Guimarães left when touched */
+#guimaraes:hover {
+    transform: translateX(-200px);
+    z-index: 20;
+}
+
+/* =========================================
+   * CENTER ZONE (Top: 450px to 800px)
+   ========================================= */
+#espinho    { top: 440px; left: 310px; }
+#viseu      { top: 460px; left: 450px; }
+#santiais   { top: 460px; left: 320px; }
+#coimbra    { top: 570px; left: 360px; }
+#leiria     { top: 680px; left: 300px; }
+
+
+/*  =========================================
+   * HOVER LOGIC FOR OVERLAP
+   ========================================= */
+/* Move espinho left when touched */  
+#espinho:hover {
+    transform: translateX(-200px);
+    z-index: 20;
+}
+
+/* Move santiais left when touched */
+#santiais:hover {
+    transform: translateX(-200px);
+    z-index: 20;
+}
+
+/* =========================================
+   * SOUTH ZONE (Top: 950px to 1300px)
+   ========================================= */
+#lisboa     { top: 850px; left: 210px; }
+#seixal     { top: 930px; left: 270px; }
+#faro       { top: 1250px; left: 450px; }
+
+/* ! Info Box */
+/* The Info Box (AI Description window) */
+.info-box {
+    position: absolute;
+    top: 150px; /* Aligned with the top cities */
+    left: 50%;
+    transform: translateX(-50%); /* Perfectly centers it horizontally */
+    width: 80%; /* Takes up most of the dashboard width */
+    max-width: 450px;
+    background-color: #ffffff;
+    border: 3px solid #007bff; /* A nice blue border to make it pop */
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2); /* Heavy shadow to lift it off the map */
+    z-index: 100; /* Higher than city blocks (5) so it stands in front */
+    text-align: left;
+}
+
+/* The text inside */
+.info-box p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+    padding-right: 20px; /* Room for the X button */
+}
+
+/* The X Close Button */
+#closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #ff4d4d; /* Red box */
+    color: white;
+    border: none;
+    border-radius: 6px; /* Little square-ish box */
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+#closeButton:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}
