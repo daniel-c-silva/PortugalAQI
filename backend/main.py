@@ -1,10 +1,10 @@
 import time 
-from flask.cli import load_dotenv
+import os 
 import requests
-from mistralai.client import Mistral
 from flask import Flask, jsonify
 from flask_cors import CORS 
-import os 
+from mistralai.client import Mistral
+from dotenv import load_dotenv # Change from flask.cli
 from flask_caching import Cache # ?so i dont keep asking mistral for the same city every 1 second.
 
 load_dotenv() # * load env variables. api keys
@@ -100,6 +100,11 @@ def get_city_description(city, aqi, Time):
 
 
 # ! MAIN ROUTE
+
+# here for render was stuck on how to do it without.
+@app.route("/health")
+def health():
+    return "OK", 200
 
 # ! main function.
 @app.route("/") 
