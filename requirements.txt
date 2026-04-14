@@ -4,3 +4,4 @@ gunicorn
 python-dotenv
 requests
 mistralai
+Flask-Caching
