@@ -3,5 +3,5 @@ flask-cors==4.0.0
 gunicorn==21.2.0
 python-dotenv==1.0.0
 requests==2.31.0
-mistralai==0.1.2
+mistralai>=1.0.0
 Flask-Caching==2.1.0
