@@ -89,15 +89,20 @@ def get_air_quality_by_zone():
 
 # ! helperfunction to get a comment about the city and it's AQI 
 def get_city_description(city, aqi, Time):
-    
-    prompt = f"Write exactly one line using this template: (exceptions: IF CITY is R Filipe Da Mata then name it Lisbon and its aqi and time are now tied to lisbon. the aqi evaluation city description and industry MUST BE about lisbon when we talk about r Filipe Da Mata IF WE ARE NOT TALKING ABOUT R FILIPE DA MATA WE DO NOT MENTION IT OR LISBON EVER.){city}, {aqi}, {Time}; [Air Quality Evaluation], [City Description], Industry type: [Industry]. Do not use bolding, do not use bullet points, and do not press enter."
-    response = client.chat.complete(model="mistral-large-latest", messages=[{"role": "user", "content": prompt}])
+    try:
+        prompt = f"Write exactly one line using this template: (exceptions: IF CITY is R Filipe Da Mata then name it Lisbon and its aqi and time are now tied to lisbon. the aqi evaluation city description and industry MUST BE about lisbon when we talk about r Filipe Da Mata IF WE ARE NOT TALKING ABOUT R FILIPE DA MATA WE DO NOT MENTION IT OR LISBON EVER.){city}, {aqi}, {Time}; [Air Quality Evaluation], [City Description], Industry type: [Industry]. Do not use bolding, do not use bullet points, and do not press enter."
+        
+        # * CHANGED: Using mistral-small-latest because it allows 6+ requests per second, whereas large only allows 1.
+        response = client.chat.complete(
+            model="mistral-small-latest", 
+            messages=[{"role": "user", "content": prompt}]
+        )
 
-    return response.choices[0].message.content 
-
-
-
-
+        return response.choices[0].message.content 
+    except Exception as e:
+        # * If the rate limit is hit, return a fallback string so the app doesn't crash.
+        print(f"Error calling Mistral: {e}")
+        return f"{city}, {aqi}, {Time}; Status: Good, City: {city}, Industry: Mixed."
 
 # ! MAIN ROUTE
 
@@ -119,11 +124,6 @@ def home():
             "time": Time,
             "description": description
         })
-        time.sleep(10) # * sleep for 1 sec before the next request. (edited to 3 so it doesnt give a rate limit error)
+        # * Reduced sleep to 0.2 because mistral-small is faster and less likely to block.
+        time.sleep(0.2) 
     return jsonify(output) 
-
-
-
-
-if __name__ == "__main__": 
-   app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5002)), debug=True) #! this is used to run the app. host
