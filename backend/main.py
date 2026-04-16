@@ -119,7 +119,7 @@ def home():
             "time": Time,
             "description": description
         })
-        time.sleep(1) # * sleep for 1 sec before the next request.
+        time.sleep(3) # * sleep for 1 sec before the next request. (edited to 3 so it doesnt give a rate limit error)
     return jsonify(output) 
 
 
