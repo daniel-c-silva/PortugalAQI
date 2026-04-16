@@ -92,17 +92,21 @@ def get_city_description(city, aqi, Time):
     try:
         prompt = f"Write exactly one line using this template: (exceptions: IF CITY is R Filipe Da Mata then name it Lisbon and its aqi and time are now tied to lisbon. the aqi evaluation city description and industry MUST BE about lisbon when we talk about r Filipe Da Mata IF WE ARE NOT TALKING ABOUT R FILIPE DA MATA WE DO NOT MENTION IT OR LISBON EVER.){city}, {aqi}, {Time}; [Air Quality Evaluation], [City Description], Industry type: [Industry]. Do not use bolding, do not use bullet points, and do not press enter."
         
-        # * CHANGED: Using mistral-small-latest because it allows 6+ requests per second, whereas large only allows 1.
+        # * CHANGED: Model to small to try and bypass the 'Large' model bottleneck
         response = client.chat.complete(
             model="mistral-small-latest", 
             messages=[{"role": "user", "content": prompt}]
         )
 
+        # * Mistral SDK v1 uses .choices[0].message.content
         return response.choices[0].message.content 
+
     except Exception as e:
-        # * If the rate limit is hit, return a fallback string so the app doesn't crash.
-        print(f"Error calling Mistral: {e}")
-        return f"{city}, {aqi}, {Time}; Status: Good, City: {city}, Industry: Mixed."
+        # ! This block catches the 429 error so your website actually loads!
+        print(f"Mistral is throttling us: {e}")
+        
+        # * Return a manual description so the user sees something instead of an error page
+        return f"{city}, {aqi}, {Time}; Air quality is currently being monitored, [AI description temporarily unavailable], Industry type: Diverse."
 
 # ! MAIN ROUTE
 
