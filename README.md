@@ -1,6 +1,6 @@
 # Portugal AQI
 
-**Stay informed on what you're breathing**
+**A real-time map displaying the AQI of portuguese cities.**
 
 ## Features
 
