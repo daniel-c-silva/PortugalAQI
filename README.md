@@ -8,14 +8,14 @@
 
 * Multiple cities
 
-* AI infromation on the city, it's aqi and industry type
+* AI infromation on the city, its aqi and industry type
 
 * time of last AQI update
 
 ## Tech Stack
 
 - **Frontend:** React
-- **Backend:** Flask + WAQI API + MISTRAL AI
+- **Backend:** Flask + WAQI API + GROQ AI
 
 ## Live demo
 
@@ -58,4 +58,6 @@ this helped me sink even deeper into my api integration skills, though react was
 
 
 I'll add more features in a small bit.
+
+(mistralAI was not working anymore for me. So now groq is it)
 
