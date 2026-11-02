@@ -3,9 +3,9 @@ import os
 import requests
 from flask import Flask, jsonify
 from flask_cors import CORS 
-from mistralai.client import Mistral
+from groq import Groq  # * Changed from mistralai to groq
 from dotenv import load_dotenv # Change from flask.cli
-from flask_caching import Cache # ?so i dont keep asking mistral for the same city every 1 second.
+from flask_caching import Cache # ?so i dont keep asking groq for the same city every 1 second.
 
 load_dotenv() # * load env variables. api keys
 
@@ -14,13 +14,13 @@ app = Flask(__name__) # * the app using it to create routes and stuff
 CORS(app) # * this is used so the frontend can acess the backend.
 
 
-cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache'}) # * this is used to cache the results of the get_city_description function, so we dont keep asking mistral for the same city every 1 second.
+cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache'}) # * this is used to cache the results of the get_city_description function, so we dont keep asking groq for the same city every 1 second.
 
 
-# ! Setup Mistral
-MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")  # .envd
+# ! Setup Groq (Changed from Mistral)
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # .envd
 
-client = Mistral(api_key=MISTRAL_API_KEY)
+client = Groq(api_key=GROQ_API_KEY)
 
 
 # ! Setup AQI
@@ -28,29 +28,29 @@ AQ_API_KEY = os.getenv("AQ_API_KEY")  # .envd
 
 stations = [ 
     # ? Viana do castelo sem info desde jan 2026
-   #! Braga distr
-   "A164116", # * Braga, Braga
-   "A539401", # * Guimaraes, Braga
-   # ?  no bragança data
-   # ! Vila Real distr
+    #! Braga distr
+    "A164116", # * Braga, Braga
+    "A539401", # * Guimaraes, Braga
+    # ?  no bragança data
+    # ! Vila Real distr
     "A539404", # * Borbela e lamas douro, Vila Real
-   # ! Porto distr
-   "A539383", # * Francisco sa carneiro, Porto
-   #! AVEIRO distr
-   "A572635", # * Santiais, Aveiro
-   "A540427", # * Espinho, Aveiro
-   #! Viseu distr
-   "A104230", # * Calçada do Terço, "Viseu"
-   #! Coimbra distr
-   "A539422", # * Coimbra
-   # ! Leiria distr
-   "A539434",# * Ervedeira, Leiria 
-   # ! Lisbon distr
-   "A97159", # * R, Filipe da mata, Lisboa
-   # ! setubal distr
-   "A539446", # * Seixal
-   # ! Faro distr
-   "portugal/faro/Joaquim-Magalhaes" # * Faro
+    # ! Porto distr
+    "A539383", # * Francisco sa carneiro, Porto
+    #! AVEIRO distr
+    "A572635", # * Santiais, Aveiro
+    "A540427", # * Espinho, Aveiro
+    #! Viseu distr
+    "A104230", # * Calçada do Terço, "Viseu"
+    #! Coimbra distr
+    "A539422", # * Coimbra
+    # ! Leiria distr
+    "A539434",# * Ervedeira, Leiria 
+    # ! Lisbon distr
+    "A97159", # * R, Filipe da mata, Lisboa
+    # ! setubal distr
+    "A539446", # * Seixal
+    # ! Faro distr
+    "portugal/faro/Joaquim-Magalhaes" # * Faro
 ]
 
 
@@ -92,16 +92,16 @@ def get_city_description(city, aqi, Time):
     try:
         prompt = f"Write exactly one line using this template: (exceptions: IF CITY is R Filipe Da Mata then name it Lisbon and its aqi and time are now tied to lisbon. the aqi evaluation city description and industry MUST BE about lisbon when we talk about r Filipe Da Mata IF WE ARE NOT TALKING ABOUT R FILIPE DA MATA WE DO NOT MENTION IT OR LISBON EVER.){city}, {aqi}, {Time}; [Air Quality Evaluation], [City Description], Industry type: [Industry]. Do not use bolding, do not use bullet points, and do not press enter."
         
-        # * CHANGED: Model to small to try and bypass the 'Large' model problem
-        response = client.chat.complete(
-            model="mistral-small-latest", 
+        # * CHANGED: Swapped to Groq API call
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b", 
             messages=[{"role": "user", "content": prompt}]
         )
         return response.choices[0].message.content 
 
     except Exception as e:
         # ! This block catches the 429 error it works
-        print(f"Mistral is throttling us: {e}")
+        print(f"Groq is throttling us: {e}")
         
         # * Return a manual description so the user sees something instead of an error page
         return f"{city}, {aqi}, {Time}; Air quality is currently being monitored, [AI description temporarily unavailable], Industry type: Diverse."
@@ -115,7 +115,7 @@ def health():
 
 # ! main function.
 @app.route("/") 
-@cache.cached(timeout=300) # * cache the results of this function for 5 minutes, so we dont keep asking mistral for the same city every 1 second.
+@cache.cached(timeout=300) # * cache the results of this function for 5 minutes, so we dont keep asking groq for the same city every 1 second.
 def home():
     output = [] # * create an empty list to store the output
     for city, aqi, Time in get_air_quality_by_zone(): 
@@ -126,6 +126,6 @@ def home():
             "time": Time,
             "description": description
         })
-        # * Reduced sleep to 0.2 because mistral-small is faster and less likely to block.
+        # * Reduced sleep to 0.2 because Groq is fast and responsive.
         time.sleep(0.2) 
-    return jsonify(output) 
+    return jsonify(output)
